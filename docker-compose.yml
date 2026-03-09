@@ -1,66 +1,68 @@
 services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION:-2026.3.8}
-    container_name: openclaw-gateway
-    restart: unless-stopped
+    image: "ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION:-2026.3.8}"
+    container_name: "openclaw-gateway"
+    restart: "unless-stopped"
     init: true
     user: "root"
 
     environment:
-      HOME: /home/node
-      TZ: ${TZ:-Asia/Shanghai}
-      NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}
-      OPENCLAW_VERSION: ${OPENCLAW_VERSION:-2026.3.8}
+      HOME: "/home/node"
+      TZ: "${TZ:-Asia/Shanghai}"
+      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+      OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.3.8}"
 
-      OPENCLAW_GATEWAY_BIND: ${OPENCLAW_GATEWAY_BIND:-lan}
-      OPENCLAW_GATEWAY_PORT: ${OPENCLAW_GATEWAY_PORT:-18789}
-      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-change-this-token}
-      OPENCLAW_CONTROL_UI_ORIGIN: ${OPENCLAW_CONTROL_UI_ORIGIN:-https://openclaw.aileapp.net}
+      OPENCLAW_GATEWAY_BIND: "${OPENCLAW_GATEWAY_BIND:-lan}"
+      OPENCLAW_GATEWAY_PORT: "${OPENCLAW_GATEWAY_PORT:-18789}"
+      OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN:-change-this-token}"
+      OPENCLAW_CONTROL_UI_ORIGIN: "${OPENCLAW_CONTROL_UI_ORIGIN:-https://openclaw.aileapp.net}"
 
-      OPENCLAW_PRIMARY_MODEL: ${OPENCLAW_PRIMARY_MODEL:-minimax-m2.5}
-      MEMORY_SEARCH_ENABLED: ${MEMORY_SEARCH_ENABLED:-false}
-      MEMORY_EMBEDDING_DIMENSIONS: ${MEMORY_EMBEDDING_DIMENSIONS:-1024}
+      OPENCLAW_PRIMARY_MODEL: "${OPENCLAW_PRIMARY_MODEL:-minimax-m2.5}"
+      MEMORY_SEARCH_ENABLED: "${MEMORY_SEARCH_ENABLED:-false}"
+      MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
 
-      CLAWHUB_TOKEN: ${CLAWHUB_TOKEN:-}
+      CLAWHUB_TOKEN: "${CLAWHUB_TOKEN:-}"
 
-      ALIYUN_BASE_URL: ${ALIYUN_BASE_URL:-https://coding.dashscope.aliyuncs.com/v1}
-      ALIYUN_API_KEY: ${ALIYUN_API_KEY:-}
+      ALIYUN_BASE_URL: "${ALIYUN_BASE_URL:-https://coding.dashscope.aliyuncs.com/v1}"
+      ALIYUN_API_KEY: "${ALIYUN_API_KEY:-}"
 
-      TENCENT_BASE_URL: ${TENCENT_BASE_URL:-https://api.lkeap.cloud.tencent.com/coding/v3}
-      TENCENT_API_KEY: ${TENCENT_API_KEY:-}
+      TENCENT_BASE_URL: "${TENCENT_BASE_URL:-https://api.lkeap.cloud.tencent.com/coding/v3}"
+      TENCENT_API_KEY: "${TENCENT_API_KEY:-}"
 
-      MEMORY_EMBEDDING_BASE_URL: ${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
-      MEMORY_EMBEDDING_API_KEY: ${MEMORY_EMBEDDING_API_KEY:-}
-      MEMORY_EMBEDDING_MODEL: ${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}
+      MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
+      MEMORY_EMBEDDING_API_KEY: "${MEMORY_EMBEDDING_API_KEY:-}"
+      MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
 
-      FEISHU_APP_ID: ${FEISHU_APP_ID:-}
-      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET:-}
-      FEISHU_DOMAIN: ${FEISHU_DOMAIN:-feishu}
-      FEISHU_BOT_NAME: ${FEISHU_BOT_NAME:-OpenClaw}
+      FEISHU_APP_ID: "${FEISHU_APP_ID:-}"
+      FEISHU_APP_SECRET: "${FEISHU_APP_SECRET:-}"
+      FEISHU_DOMAIN: "${FEISHU_DOMAIN:-feishu}"
+      FEISHU_BOT_NAME: "${FEISHU_BOT_NAME:-OpenClaw}"
 
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
-      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
-      GROQ_API_KEY: ${GROQ_API_KEY:-}
-      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
-      TOGETHER_API_KEY: ${TOGETHER_API_KEY:-}
-      QIANFAN_API_KEY: ${QIANFAN_API_KEY:-}
-      MINIMAX_API_KEY: ${MINIMAX_API_KEY:-}
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      GROQ_API_KEY: "${GROQ_API_KEY:-}"
+      NVIDIA_API_KEY: "${NVIDIA_API_KEY:-}"
+      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-}"
+      QIANFAN_API_KEY: "${QIANFAN_API_KEY:-}"
+      MINIMAX_API_KEY: "${MINIMAX_API_KEY:-}"
 
-      OPENCLAW_STACK_ROOT: /opt/openclaw-stack
+      OPENCLAW_STACK_ROOT: "/opt/openclaw-stack"
 
-    command: ["/bin/sh", "/opt/openclaw-stack/scripts/bootstrap.sh"]
+    command:
+      - "/bin/sh"
+      - "/opt/openclaw-stack/scripts/bootstrap.sh"
 
     ports:
       - "${OPENCLAW_GATEWAY_PORT:-18789}:${OPENCLAW_GATEWAY_PORT:-18789}"
 
     volumes:
-      - openclaw_config:/home/node/.openclaw
-      - openclaw_workspace:/home/node/.openclaw/workspace
-      - /opt/openclaw-stack/scripts:/opt/openclaw-stack/scripts:ro
-      - /opt/openclaw-stack/config:/opt/openclaw-stack/config:ro
+      - "openclaw_config:/home/node/.openclaw"
+      - "openclaw_workspace:/home/node/.openclaw/workspace"
+      - "/opt/openclaw-stack/scripts:/opt/openclaw-stack/scripts:ro"
+      - "/opt/openclaw-stack/config:/opt/openclaw-stack/config:ro"
 
 volumes:
   openclaw_config:
