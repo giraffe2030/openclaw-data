@@ -1,18 +1,20 @@
-# 忽略敏感数据
+# Secrets and local env
+.env
 *.env
 *.key
 *.pem
 secrets/
+openclaw.json
 
-# 日志文件
+# Logs
 *.log
 logs/
 
-# 临时文件
+# Temp and cache
 .tmp/
 *.tmp
 .cache/
 
-# 系统文件
+# OS files
 .DS_Store
 Thumbs.db
