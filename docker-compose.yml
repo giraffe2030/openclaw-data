@@ -1,7 +1,7 @@
 services:
   openclaw-gateway:
     image: "ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION:-2026.3.8}"
-    container_name: "openclaw-gateway"
+    container_name: "openclaw-gateway-v2"
     restart: "unless-stopped"
     init: true
     user: "root"
