@@ -6,9 +6,9 @@ STATE_DIR="/home/node/.openclaw"
 CONFIG_TEMPLATE="$STACK_ROOT/config/openclaw.json"
 CONFIG_OUTPUT="$STATE_DIR/openclaw.json"
 IMAGE_EXT_DIR="/app/extensions"
-EXT_STATE_DIR="$STATE_DIR/extensions"
+EXT_CACHE_DIR="${OPENCLAW_EXT_CACHE_DIR:-/opt/openclaw/extensions-cache}"
 SEED_VERSION="${OPENCLAW_VERSION:-unknown}"
-EXT_LOCK_DIR="$EXT_STATE_DIR/.bootstrap.lock"
+EXT_LOCK_DIR="$EXT_CACHE_DIR/.bootstrap.lock"
 
 log() {
   printf '[bootstrap] %s\n' "$1"
@@ -32,7 +32,7 @@ unlock_extensions() {
 sync_extension() {
   dir="$1"
   src="$IMAGE_EXT_DIR/$dir"
-  dst="$EXT_STATE_DIR/$dir"
+  dst="$EXT_CACHE_DIR/$dir"
   marker="$dst/.openclaw-seed-version"
 
   if [ ! -d "$src" ]; then
@@ -50,6 +50,15 @@ sync_extension() {
   else
     log "extension source ok: $dir@$SEED_VERSION"
   fi
+}
+
+link_extension_deps() {
+  dir="$1"
+  src="$IMAGE_EXT_DIR/$dir"
+  dst="$EXT_CACHE_DIR/$dir"
+
+  rm -rf "$src/node_modules"
+  ln -s "$dst/node_modules" "$src/node_modules"
 }
 
 install_dep() {
@@ -88,7 +97,7 @@ log "prepare state directories"
 ensure_dir "$STATE_DIR"
 ensure_dir "$STATE_DIR/workspace"
 ensure_dir "$STATE_DIR/memory/lancedb"
-ensure_dir "$EXT_STATE_DIR"
+ensure_dir "$EXT_CACHE_DIR"
 
 npm config set registry "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}" >/dev/null 2>&1 || true
 
@@ -98,12 +107,15 @@ lock_extensions
 sync_extension feishu
 sync_extension memory-lancedb
 
-install_dep "$EXT_STATE_DIR/feishu" "@larksuiteoapi/node-sdk"
-install_dep "$EXT_STATE_DIR/memory-lancedb" "openai"
+install_dep "$EXT_CACHE_DIR/feishu" "@larksuiteoapi/node-sdk"
+install_dep "$EXT_CACHE_DIR/memory-lancedb" "openai"
+
+link_extension_deps feishu
+link_extension_deps memory-lancedb
 
 node <<'NODE'
-require.resolve("@larksuiteoapi/node-sdk", { paths: ["/home/node/.openclaw/extensions/feishu"] });
-require.resolve("openai", { paths: ["/home/node/.openclaw/extensions/memory-lancedb"] });
+require.resolve("@larksuiteoapi/node-sdk", { paths: ["/app/extensions/feishu"] });
+require.resolve("openai", { paths: ["/app/extensions/memory-lancedb"] });
 console.log("[bootstrap] runtime resolve check passed");
 NODE
 

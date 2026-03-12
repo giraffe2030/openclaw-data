@@ -7,6 +7,10 @@ x-openclaw-common: &openclaw-common
   restart: "unless-stopped"
   init: true
   user: "root"
+  dns:
+    - "223.5.5.5"
+    - "1.1.1.1"
+    - "8.8.8.8"
   environment:
     HOME: "/home/node"
     OPENCLAW_STACK_ROOT: "/opt/openclaw"
@@ -17,7 +21,7 @@ x-openclaw-common: &openclaw-common
     MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
     MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
     MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
-    NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+    NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}"
     ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
     ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
     TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
@@ -37,7 +41,7 @@ x-openclaw-common: &openclaw-common
     - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
     # 共享资源 (定点绝对路径挂载)
     - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
-    - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+    - "/root/docker-apps/openclaw/workspace/shared/extensions:/opt/openclaw/extensions-cache"
 
 services:
   # --- OpenClaw 实例 1 (核心节点) ---
@@ -54,7 +58,7 @@ services:
       MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
       MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
       MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
-      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}"
       ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
       ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
       TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
@@ -76,7 +80,7 @@ services:
       - "/root/docker-apps/openclaw/scripts:/opt/openclaw/scripts:ro"
       - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
       - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
-      - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+      - "/root/docker-apps/openclaw/workspace/shared/extensions:/opt/openclaw/extensions-cache"
       - "/root/docker-apps/openclaw/workspace/instance1/config:/home/node/.openclaw"
       - "/root/docker-apps/openclaw/workspace/instance1/data:/home/node/.openclaw/workspace"
 
@@ -94,7 +98,7 @@ services:
       MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
       MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
       MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
-      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}"
       ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
       ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
       TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
@@ -116,7 +120,7 @@ services:
       - "/root/docker-apps/openclaw/scripts:/opt/openclaw/scripts:ro"
       - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
       - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
-      - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+      - "/root/docker-apps/openclaw/workspace/shared/extensions:/opt/openclaw/extensions-cache"
       - "/root/docker-apps/openclaw/workspace/instance2/config:/home/node/.openclaw"
       - "/root/docker-apps/openclaw/workspace/instance2/data:/home/node/.openclaw/workspace"
 
