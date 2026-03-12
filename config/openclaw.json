@@ -36,8 +36,7 @@
       },
       "memorySearch": {
         "enabled": ${MEMORY_SEARCH_ENABLED:-false}
-      },
-      "memoryEmbeddingDimensions": ${MEMORY_EMBEDDING_DIMENSIONS:-1024}
+      }
     }
   },
   "models": {
