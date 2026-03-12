@@ -3,8 +3,11 @@ set -eu
 
 STACK_ROOT="${OPENCLAW_STACK_ROOT:-/opt/openclaw-stack}"
 STATE_DIR="/home/node/.openclaw"
-CONFIG_TEMPLATE="$STACK_ROOT/config/openclaw.json5.tmpl"
+CONFIG_TEMPLATE="$STACK_ROOT/config/openclaw.json"
 CONFIG_OUTPUT="$STATE_DIR/openclaw.json"
+IMAGE_EXT_DIR="/app/extensions"
+EXT_STATE_DIR="$STATE_DIR/extensions"
+SEED_VERSION="${OPENCLAW_VERSION:-unknown}"
 
 log() {
   printf '[bootstrap] %s\n' "$1"
@@ -12,6 +15,29 @@ log() {
 
 ensure_dir() {
   mkdir -p "$1"
+}
+
+sync_extension() {
+  dir="$1"
+  src="$IMAGE_EXT_DIR/$dir"
+  dst="$EXT_STATE_DIR/$dir"
+  marker="$dst/.openclaw-seed-version"
+
+  if [ ! -d "$src" ]; then
+    echo "[bootstrap] missing image extension: $src" >&2
+    exit 1
+  fi
+
+  if [ ! -d "$dst" ] || [ ! -f "$marker" ] || [ "$(cat "$marker" 2>/dev/null)" != "$SEED_VERSION" ]; then
+    log "sync extension source: $dir@$SEED_VERSION"
+    rm -rf "$dst.tmp"
+    cp -R "$src" "$dst.tmp"
+    rm -rf "$dst"
+    mv "$dst.tmp" "$dst"
+    printf '%s\n' "$SEED_VERSION" > "$marker"
+  else
+    log "extension source ok: $dir@$SEED_VERSION"
+  fi
 }
 
 install_dep() {
@@ -42,18 +68,19 @@ log "prepare state directories"
 ensure_dir "$STATE_DIR"
 ensure_dir "$STATE_DIR/workspace"
 ensure_dir "$STATE_DIR/memory/lancedb"
-ensure_dir "$STATE_DIR/extensions"
-
-rm -rf "$STATE_DIR/extensions/feishu" "$STATE_DIR/extensions/memory-lancedb" || true
+ensure_dir "$EXT_STATE_DIR"
 
 npm config set registry "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}" >/dev/null 2>&1 || true
 
-install_dep /app/extensions/feishu "@larksuiteoapi/node-sdk"
-install_dep /app/extensions/memory-lancedb "openai"
+sync_extension feishu
+sync_extension memory-lancedb
+
+install_dep "$EXT_STATE_DIR/feishu" "@larksuiteoapi/node-sdk"
+install_dep "$EXT_STATE_DIR/memory-lancedb" "openai"
 
 node <<'NODE'
-require.resolve("@larksuiteoapi/node-sdk", { paths: ["/app/extensions/feishu"] });
-require.resolve("openai", { paths: ["/app/extensions/memory-lancedb"] });
+require.resolve("@larksuiteoapi/node-sdk", { paths: ["/home/node/.openclaw/extensions/feishu"] });
+require.resolve("openai", { paths: ["/home/node/.openclaw/extensions/memory-lancedb"] });
 console.log("[bootstrap] runtime resolve check passed");
 NODE
 
