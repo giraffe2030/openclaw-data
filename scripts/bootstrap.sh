@@ -8,6 +8,7 @@ CONFIG_OUTPUT="$STATE_DIR/openclaw.json"
 IMAGE_EXT_DIR="/app/extensions"
 EXT_STATE_DIR="$STATE_DIR/extensions"
 SEED_VERSION="${OPENCLAW_VERSION:-unknown}"
+EXT_LOCK_DIR="$EXT_STATE_DIR/.bootstrap.lock"
 
 log() {
   printf '[bootstrap] %s\n' "$1"
@@ -15,6 +16,17 @@ log() {
 
 ensure_dir() {
   mkdir -p "$1"
+}
+
+lock_extensions() {
+  while ! mkdir "$EXT_LOCK_DIR" 2>/dev/null; do
+    log "wait extension lock"
+    sleep 1
+  done
+}
+
+unlock_extensions() {
+  rmdir "$EXT_LOCK_DIR" 2>/dev/null || true
 }
 
 sync_extension() {
@@ -72,6 +84,9 @@ ensure_dir "$EXT_STATE_DIR"
 
 npm config set registry "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}" >/dev/null 2>&1 || true
 
+trap unlock_extensions EXIT INT TERM
+lock_extensions
+
 sync_extension feishu
 sync_extension memory-lancedb
 
@@ -83,6 +98,9 @@ require.resolve("@larksuiteoapi/node-sdk", { paths: ["/home/node/.openclaw/exten
 require.resolve("openai", { paths: ["/home/node/.openclaw/extensions/memory-lancedb"] });
 console.log("[bootstrap] runtime resolve check passed");
 NODE
+
+unlock_extensions
+trap - EXIT INT TERM
 
 if [ ! -f "$CONFIG_TEMPLATE" ]; then
   echo "[bootstrap] missing template: $CONFIG_TEMPLATE" >&2
