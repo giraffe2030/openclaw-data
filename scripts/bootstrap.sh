@@ -66,14 +66,22 @@ install_dep() {
     return 0
   fi
 
-  log "deps install: $dep"
-  (
-    cd "$dir"
-    npm install --omit=dev --ignore-scripts --no-audit --no-fund "$dep"
-  ) || (
-    cd "$dir"
-    npm install --omit=dev --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org "$dep"
-  )
+  for registry in \
+    "${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}" \
+    "https://registry.npmjs.org" \
+    "https://registry.npmmirror.com"
+  do
+    log "deps install: $dep via $registry"
+    if (
+      cd "$dir"
+      npm install --omit=dev --ignore-scripts --no-audit --no-fund --registry="$registry" "$dep"
+    ); then
+      return 0
+    fi
+  done
+
+  echo "[bootstrap] failed dependency install: $dep" >&2
+  exit 1
 }
 
 log "prepare state directories"
@@ -114,9 +122,12 @@ const fs = require("fs");
 const templatePath = process.env.CONFIG_TEMPLATE;
 const outputPath = process.env.CONFIG_OUTPUT;
 const template = fs.readFileSync(templatePath, "utf8");
-const rendered = template.replace(/\$\{([A-Z0-9_]+)\}/g, (_, name) => {
+const rendered = template.replace(/\$\{([A-Z0-9_]+)(:-([^}]*))?\}/g, (_, name, _withDefault, defaultValue) => {
   const value = process.env[name];
-  return value == null ? "" : value;
+  if (value == null || value === "") {
+    return defaultValue == null ? "" : defaultValue;
+  }
+  return value;
 });
 
 fs.writeFileSync(outputPath, rendered, "utf8");
