@@ -1,69 +1,123 @@
-services:
-  openclaw-gateway:
-    image: "ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION:-2026.3.8}"
-    container_name: "openclaw-gateway-v2"
-    restart: "unless-stopped"
-    init: true
-    user: "root"
+# OpenClaw 多实例部署 (优雅版)
+version: '3.8'
 
+# --- 配置模板 (使用 YAML 锚点) ---
+x-openclaw-common: &openclaw-common
+  image: "ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION:-2026.3.8}"
+  restart: "unless-stopped"
+  init: true
+  user: "root"
+  environment:
+    HOME: "/home/node"
+    OPENCLAW_STACK_ROOT: "/opt/openclaw"
+    TZ: "${TZ:-Asia/Shanghai}"
+    OPENCLAW_GATEWAY_BIND: "${OPENCLAW_GATEWAY_BIND:-lan}"
+    OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.3.8}"
+    MEMORY_SEARCH_ENABLED: "${MEMORY_SEARCH_ENABLED:-false}"
+    MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
+    MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
+    MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
+    NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+    ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
+    ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
+    TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
+    TENCENT_API_KEY: "${TENCENT_API_KEY}"
+    MEMORY_EMBEDDING_API_KEY: "${MEMORY_EMBEDDING_API_KEY}"
+    FEISHU_DOMAIN: "${FEISHU_DOMAIN:-feishu}"
+    FEISHU_BOT_NAME: "${FEISHU_BOT_NAME:-OpenClaw}"
+    GITHUB_TOKEN: "${GITHUB_TOKEN}"
+    CLAWHUB_TOKEN: "${CLAWHUB_TOKEN}"
+  command:
+    - "/bin/sh"
+    - "/opt/openclaw/scripts/bootstrap.sh"
+  volumes:
+    # 应用代码与脚本
+    - "/root/docker-apps/openclaw/scripts:/opt/openclaw/scripts:ro"
+    # 全局配置模板 (所有实例共用)
+    - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
+    # 共享资源 (定点绝对路径挂载)
+    - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
+    - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+
+services:
+  # --- OpenClaw 实例 1 (核心节点) ---
+  instance-1:
+    <<: *openclaw-common
+    container_name: "openclaw-node-01"
     environment:
       HOME: "/home/node"
+      OPENCLAW_STACK_ROOT: "/opt/openclaw"
       TZ: "${TZ:-Asia/Shanghai}"
-      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
-      OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.3.8}"
-
       OPENCLAW_GATEWAY_BIND: "${OPENCLAW_GATEWAY_BIND:-lan}"
-      OPENCLAW_GATEWAY_PORT: "${OPENCLAW_GATEWAY_PORT:-18789}"
-      OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN:-change-this-token}"
-      OPENCLAW_CONTROL_UI_ORIGIN: "${OPENCLAW_CONTROL_UI_ORIGIN:-https://openclaw.aileapp.net}"
-
-      OPENCLAW_PRIMARY_MODEL: "${OPENCLAW_PRIMARY_MODEL:-minimax-m2.5}"
+      OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.3.8}"
       MEMORY_SEARCH_ENABLED: "${MEMORY_SEARCH_ENABLED:-false}"
       MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
-
-      CLAWHUB_TOKEN: "${CLAWHUB_TOKEN:-}"
-
-      ALIYUN_BASE_URL: "${ALIYUN_BASE_URL:-https://coding.dashscope.aliyuncs.com/v1}"
-      ALIYUN_API_KEY: "${ALIYUN_API_KEY:-}"
-
-      TENCENT_BASE_URL: "${TENCENT_BASE_URL:-https://api.lkeap.cloud.tencent.com/coding/v3}"
-      TENCENT_API_KEY: "${TENCENT_API_KEY:-}"
-
       MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
-      MEMORY_EMBEDDING_API_KEY: "${MEMORY_EMBEDDING_API_KEY:-}"
       MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
-
-      FEISHU_APP_ID: "${FEISHU_APP_ID:-}"
-      FEISHU_APP_SECRET: "${FEISHU_APP_SECRET:-}"
+      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+      ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
+      ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
+      TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
+      TENCENT_API_KEY: "${TENCENT_API_KEY}"
+      MEMORY_EMBEDDING_API_KEY: "${MEMORY_EMBEDDING_API_KEY}"
       FEISHU_DOMAIN: "${FEISHU_DOMAIN:-feishu}"
       FEISHU_BOT_NAME: "${FEISHU_BOT_NAME:-OpenClaw}"
-
-      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
-      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
-      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
-      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
-      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
-      GROQ_API_KEY: "${GROQ_API_KEY:-}"
-      NVIDIA_API_KEY: "${NVIDIA_API_KEY:-}"
-      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-}"
-      QIANFAN_API_KEY: "${QIANFAN_API_KEY:-}"
-      MINIMAX_API_KEY: "${MINIMAX_API_KEY:-}"
-
-      OPENCLAW_STACK_ROOT: "/opt/openclaw-stack"
-
-    command:
-      - "/bin/sh"
-      - "/opt/openclaw-stack/scripts/bootstrap.sh"
-
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
+      CLAWHUB_TOKEN: "${CLAWHUB_TOKEN}"
+      OPENCLAW_GATEWAY_PORT: "18789"
+      OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}"
+      OPENCLAW_NAME: "${INSTANCE1_OPENCLAW_NAME:-Agent-One}"
+      OPENCLAW_PRIMARY_MODEL: "${INSTANCE1_OPENCLAW_PRIMARY_MODEL:-tencent/minimax-m2.5}"
+      FEISHU_APP_ID: "${INSTANCE1_FEISHU_APP_ID}"
+      FEISHU_APP_SECRET: "${INSTANCE1_FEISHU_APP_SECRET}"
     ports:
-      - "${OPENCLAW_GATEWAY_PORT:-18789}:${OPENCLAW_GATEWAY_PORT:-18789}"
-
+      - "18789:18789"
     volumes:
-      - "openclaw_config:/home/node/.openclaw"
-      - "openclaw_workspace:/home/node/.openclaw/workspace"
-      - "/opt/openclaw-stack/scripts:/opt/openclaw-stack/scripts:ro"
-      - "/opt/openclaw-stack/config:/opt/openclaw-stack/config:ro"
+      - "/root/docker-apps/openclaw/scripts:/opt/openclaw/scripts:ro"
+      - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
+      - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
+      - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+      - "/root/docker-apps/openclaw/workspace/instance1/config:/home/node/.openclaw"
+      - "/root/docker-apps/openclaw/workspace/instance1/data:/home/node/.openclaw/workspace"
 
-volumes:
-  openclaw_config:
-  openclaw_workspace:
+  # --- OpenClaw 实例 2 (扩展节点) ---
+  instance-2:
+    <<: *openclaw-common
+    container_name: "openclaw-node-02"
+    environment:
+      HOME: "/home/node"
+      OPENCLAW_STACK_ROOT: "/opt/openclaw"
+      TZ: "${TZ:-Asia/Shanghai}"
+      OPENCLAW_GATEWAY_BIND: "${OPENCLAW_GATEWAY_BIND:-lan}"
+      OPENCLAW_VERSION: "${OPENCLAW_VERSION:-2026.3.8}"
+      MEMORY_SEARCH_ENABLED: "${MEMORY_SEARCH_ENABLED:-false}"
+      MEMORY_EMBEDDING_DIMENSIONS: "${MEMORY_EMBEDDING_DIMENSIONS:-1024}"
+      MEMORY_EMBEDDING_BASE_URL: "${MEMORY_EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
+      MEMORY_EMBEDDING_MODEL: "${MEMORY_EMBEDDING_MODEL:-text-embedding-v4}"
+      NPM_CONFIG_REGISTRY: "${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
+      ALIYUN_BASE_URL: "${ALIYUN_BASE_URL}"
+      ALIYUN_API_KEY: "${ALIYUN_API_KEY}"
+      TENCENT_BASE_URL: "${TENCENT_BASE_URL}"
+      TENCENT_API_KEY: "${TENCENT_API_KEY}"
+      MEMORY_EMBEDDING_API_KEY: "${MEMORY_EMBEDDING_API_KEY}"
+      FEISHU_DOMAIN: "${FEISHU_DOMAIN:-feishu}"
+      FEISHU_BOT_NAME: "${FEISHU_BOT_NAME:-OpenClaw}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
+      CLAWHUB_TOKEN: "${CLAWHUB_TOKEN}"
+      OPENCLAW_GATEWAY_PORT: "18790"
+      OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}"
+      OPENCLAW_NAME: "${INSTANCE2_OPENCLAW_NAME:-Agent-Two}"
+      OPENCLAW_PRIMARY_MODEL: "${INSTANCE2_OPENCLAW_PRIMARY_MODEL:-tencent/minimax-m2.5}"
+      FEISHU_APP_ID: "${INSTANCE2_FEISHU_APP_ID}"
+      FEISHU_APP_SECRET: "${INSTANCE2_FEISHU_APP_SECRET}"
+    ports:
+      - "18790:18790"
+    volumes:
+      - "/root/docker-apps/openclaw/scripts:/opt/openclaw/scripts:ro"
+      - "/root/docker-apps/openclaw/config/openclaw.json:/opt/openclaw/config/openclaw.json:ro"
+      - "/root/docker-apps/openclaw/workspace/shared/skills:/home/node/.openclaw/workspace/skills"
+      - "/root/docker-apps/openclaw/workspace/shared/extensions:/home/node/.openclaw/extensions"
+      - "/root/docker-apps/openclaw/workspace/instance2/config:/home/node/.openclaw"
+      - "/root/docker-apps/openclaw/workspace/instance2/data:/home/node/.openclaw/workspace"
+
+# 使用 Bind Mount 挂载，无需显式定义命名卷，方便物理迁移
