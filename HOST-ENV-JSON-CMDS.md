@@ -1,19 +1,35 @@
-# OpenClaw Host Prepare
+# OpenClaw Host Download Commands
 
-宿主机只需要执行这一条命令：
+宿主机执行这些命令即可：
+
+## 1. 创建目录
 
 ```bash
-/bin/sh -lc 'REPO_DIR=/opt/openclaw-data; if [ -d "$REPO_DIR/.git" ]; then git -C "$REPO_DIR" pull --ff-only; else git clone https://github.com/giraffe2030/openclaw-data.git "$REPO_DIR"; fi && sh "$REPO_DIR/scripts/prepare-host.sh"'
+mkdir -p /root/docker-apps/openclaw/scripts
+mkdir -p /root/docker-apps/openclaw/config
+mkdir -p /root/docker-apps/openclaw/workspace/shared/skills
+mkdir -p /root/docker-apps/openclaw/workspace/shared/extensions
+mkdir -p /root/docker-apps/openclaw/workspace/instance1/config
+mkdir -p /root/docker-apps/openclaw/workspace/instance1/data
+mkdir -p /root/docker-apps/openclaw/workspace/instance2/config
+mkdir -p /root/docker-apps/openclaw/workspace/instance2/data
 ```
 
-这条命令会：
+## 2. 下载宿主机挂载文件
 
-1. 拉取或更新仓库到 `/opt/openclaw-data`
-2. 创建宿主机目录 `/root/docker-apps/openclaw/...`
-3. 写入宿主机挂载文件：
-   `scripts/bootstrap.sh -> /root/docker-apps/openclaw/scripts/bootstrap.sh`
-   `config/openclaw.json -> /root/docker-apps/openclaw/config/openclaw.json`
+```bash
+curl -fsSL https://raw.githubusercontent.com/giraffe2030/openclaw-data/main/scripts/bootstrap.sh -o /root/docker-apps/openclaw/scripts/bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/giraffe2030/openclaw-data/main/config/openclaw.json -o /root/docker-apps/openclaw/config/openclaw.json
+chmod +x /root/docker-apps/openclaw/scripts/bootstrap.sh
+```
 
-Portainer 里还需要做一件事：
+## 3. 下载 Portainer 环境变量模板
 
-把 [PORTAINER-ENV.txt](/Users/loki/IdeaProjects/openclaw-data/PORTAINER-ENV.txt) 或本地私有的 `PORTAINER-ENV.local.txt` 内容填到 Stack `Environment`。
+```bash
+curl -fsSL https://raw.githubusercontent.com/giraffe2030/openclaw-data/main/PORTAINER-ENV.txt -o /root/docker-apps/openclaw/PORTAINER-ENV.txt
+```
+
+## 4. Portainer 里使用
+
+- `docker-compose.yml`：直接使用仓库里的 [docker-compose.yml](/Users/loki/IdeaProjects/openclaw-data/docker-compose.yml)
+- `Environment`：把 `/root/docker-apps/openclaw/PORTAINER-ENV.txt` 的内容填进去，再替换成你的真实值
