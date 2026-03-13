@@ -3,12 +3,13 @@ set -eu
 
 STACK_ROOT="${OPENCLAW_STACK_ROOT:-/opt/openclaw-stack}"
 STATE_DIR="/home/node/.openclaw"
-CONFIG_TEMPLATE="$STACK_ROOT/config/openclaw.json"
+CONFIG_TEMPLATE="${OPENCLAW_CONFIG_TEMPLATE:-$STACK_ROOT/config/openclaw.json}"
 CONFIG_OUTPUT="$STATE_DIR/openclaw.json"
 IMAGE_EXT_DIR="/app/extensions"
 EXT_CACHE_DIR="${OPENCLAW_EXT_CACHE_DIR:-/opt/openclaw/extensions-cache}"
 SEED_VERSION="${OPENCLAW_VERSION:-unknown}"
 EXT_LOCK_DIR="$EXT_CACHE_DIR/.bootstrap.lock"
+CONFIG_FORCE_RENDER="${OPENCLAW_CONFIG_FORCE_RENDER:-false}"
 
 log() {
   printf '[bootstrap] %s\n' "$1"
@@ -16,6 +17,17 @@ log() {
 
 ensure_dir() {
   mkdir -p "$1"
+}
+
+is_true() {
+  case "$1" in
+    1|true|TRUE|yes|YES|on|ON)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 lock_extensions() {
@@ -127,8 +139,15 @@ if [ ! -f "$CONFIG_TEMPLATE" ]; then
   exit 1
 fi
 
-log "render config"
-CONFIG_TEMPLATE="$CONFIG_TEMPLATE" CONFIG_OUTPUT="$CONFIG_OUTPUT" node <<'NODE'
+if [ -f "$CONFIG_OUTPUT" ] && ! is_true "$CONFIG_FORCE_RENDER"; then
+  log "keep existing config: $CONFIG_OUTPUT"
+else
+  if is_true "$CONFIG_FORCE_RENDER"; then
+    log "force render config"
+  else
+    log "seed config"
+  fi
+  CONFIG_TEMPLATE="$CONFIG_TEMPLATE" CONFIG_OUTPUT="$CONFIG_OUTPUT" node <<'NODE'
 const fs = require("fs");
 
 const templatePath = process.env.CONFIG_TEMPLATE;
@@ -145,7 +164,8 @@ const rendered = template.replace(/\$\{([A-Z0-9_]+)(:-([^}]*))?\}/g, (_, name, _
 fs.writeFileSync(outputPath, rendered, "utf8");
 NODE
 
-chmod 600 "$CONFIG_OUTPUT" || true
+  chmod 600 "$CONFIG_OUTPUT" || true
+fi
 
 log "start gateway"
 exec openclaw gateway --bind "${OPENCLAW_GATEWAY_BIND:-lan}" --port "${OPENCLAW_GATEWAY_PORT:-18789}"
