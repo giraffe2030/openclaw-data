@@ -1,0 +1,483 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.14",
+    "lastTouchedAt": "2026-03-18T01:47:07.669Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-15T10:48:37.388Z",
+    "lastRunVersion": "2026.3.13",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "browser": {
+    "enabled": true,
+    "defaultProfile": "openclaw"
+  },
+  "auth": {
+    "profiles": {
+      "openrouter:default": {
+        "provider": "openrouter",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "tencent-coding-plan": {
+        "baseUrl": "https://api.lkeap.cloud.tencent.com/coding/v3",
+        "apiKey": "__OPENCLAW_REDACTED__",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "minimax-m2.5",
+            "name": "MiniMax-M2.5",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 196608,
+            "maxTokens": 32768
+          },
+          {
+            "id": "kimi-k2.5",
+            "name": "Kimi-K2.5",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 32768
+          }
+        ]
+      },
+      "aliyun-code-plan": {
+        "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
+        "apiKey": "__OPENCLAW_REDACTED__",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "MiniMax-M2.5",
+            "name": "MiniMax-M2.5",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 196608,
+            "maxTokens": 32768
+          },
+          {
+            "id": "kimi-k2.5",
+            "name": "kimi-k2.5",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 32768,
+            "compat": {
+              "thinkingFormat": "qwen"
+            }
+          }
+        ]
+      },
+      "cliproxyapi": {
+        "baseUrl": "http://192.168.100.135:8317/v1",
+        "apiKey": "__OPENCLAW_REDACTED__",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "gpt-5.4",
+            "name": "GPT-5.4",
+            "api": "openai-completions",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 400000,
+            "maxTokens": 128000
+          },
+          {
+            "id": "gemini-3-flash",
+            "name": "Gemini-3-Flash",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 1048576,
+            "maxTokens": 65536
+          },
+          {
+            "id": "gemini-3-pro-high",
+            "name": "Gemini-3-Pro-High",
+            "api": "openai-completions",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 1048576,
+            "maxTokens": 65536
+          },
+          {
+            "id": "claude-opus-4-6-thinking",
+            "name": "Claude-Opus-4.6-Thinking",
+            "api": "openai-completions",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 65536
+          },
+          {
+            "id": "claude-sonnet-4-6",
+            "name": "Claude-Sonnet-4.6",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 65536
+          },
+          {
+            "id": "gpt-5.1-codex-mini",
+            "name": "GPT-5.1-Codex-Mini",
+            "api": "openai-completions",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 400000,
+            "maxTokens": 128000
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "tencent-coding-plan/minimax-m2.5"
+      },
+      "models": {
+        "tencent-coding-plan/minimax-m2.5": {},
+        "tencent-coding-plan/kimi-k2.5": {},
+        "aliyun-code-plan/MiniMax-M2.5": {},
+        "aliyun-code-plan/kimi-k2.5": {},
+        "cliproxyapi/gpt-5.4": {},
+        "cliproxyapi/gemini-3-flash": {},
+        "cliproxyapi/gemini-3-pro-high": {},
+        "cliproxyapi/claude-opus-4-6-thinking": {},
+        "cliproxyapi/claude-sonnet-4-6": {},
+        "cliproxyapi/gpt-5.1-codex-mini": {}
+      },
+      "workspace": "/home/node/.openclaw/workspace",
+      "memorySearch": {
+        "remote": {
+          "apiKey": "__OPENCLAW_REDACTED__"
+        }
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "timeoutSeconds": 1800,
+      "imageMaxDimensionPx": 999999,
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8,
+        "runTimeoutSeconds": 1800
+      },
+      "sandbox": {
+        "mode": "off"
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "name": "main",
+        "workspace": "/home/node/.openclaw/workspace",
+        "agentDir": "/home/node/.openclaw/agents/main/agent",
+        "model": "aliyun-code-plan/MiniMax-M2.5"
+      },
+      {
+        "id": "feishu-2",
+        "name": "feishu-2",
+        "workspace": "/home/node/.openclaw/workspace-feishu-2",
+        "agentDir": "/home/node/.openclaw/agents/feishu-2/agent",
+        "model": "tencent-coding-plan/minimax-m2.5"
+      },
+      {
+        "id": "telegram",
+        "name": "telegram",
+        "workspace": "/home/node/.openclaw/workspace-telegram",
+        "agentDir": "/home/node/.openclaw/agents/telegram/agent",
+        "model": "cliproxyapi/gpt-5.4"
+      },
+      {
+        "id": "sentinel",
+        "name": "sentinel",
+        "workspace": "/home/node/.openclaw/workspace-sentinel",
+        "agentDir": "/home/node/.openclaw/agents/sentinel/agent",
+        "model": "cliproxyapi/gemini-3-flash"
+      }
+    ]
+  },
+  "tools": {
+    "profile": "full"
+  },
+  "bindings": [
+    {
+      "type": "route",
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default"
+      }
+    },
+    {
+      "type": "route",
+      "agentId": "feishu-2",
+      "match": {
+        "channel": "feishu",
+        "accountId": "feishu-2"
+      }
+    },
+    {
+      "type": "route",
+      "agentId": "telegram",
+      "match": {
+        "channel": "telegram",
+        "accountId": "default"
+      }
+    },
+    {
+      "type": "route",
+      "agentId": "sentinel",
+      "match": {
+        "channel": "telegram",
+        "accountId": "monitoring"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "allowFrom": [
+        "8501112181"
+      ],
+      "groupAllowFrom": [
+        "8501112181"
+      ],
+      "groupPolicy": "allowlist",
+      "streaming": "partial",
+      "accounts": {
+        "default": {
+          "name": "telegram-default",
+          "dmPolicy": "pairing",
+          "botToken": "__OPENCLAW_REDACTED__",
+          "allowFrom": [
+            "8501112181"
+          ],
+          "groupAllowFrom": [
+            "8501112181"
+          ],
+          "groupPolicy": "allowlist",
+          "streaming": "partial",
+          "proxy": "http://192.168.100.1:7890"
+        },
+        "monitoring": {
+          "name": "telegram-sentinel",
+          "dmPolicy": "pairing",
+          "botToken": "__OPENCLAW_REDACTED__",
+          "allowFrom": [
+            "8501112181"
+          ],
+          "groupAllowFrom": [
+            "8501112181"
+          ],
+          "groupPolicy": "allowlist",
+          "streaming": "partial",
+          "proxy": "http://192.168.100.1:7890"
+        }
+      },
+      "defaultAccount": "default"
+    },
+    "feishu": {
+      "enabled": true,
+      "connectionMode": "websocket",
+      "domain": "feishu",
+      "dmPolicy": "pairing",
+      "groupPolicy": "open",
+      "streaming": true,
+      "blockStreaming": true,
+      "defaultAccount": "default",
+      "accounts": {
+        "default": {
+          "appId": "cli_a920c64576781bb5",
+          "appSecret": "__OPENCLAW_REDACTED__",
+          "botName": "default"
+        },
+        "feishu-2": {
+          "appId": "cli_a92173c9fcb8dcc5",
+          "appSecret": "__OPENCLAW_REDACTED__",
+          "botName": "feishu-2"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "allowedOrigins": [
+        "https://openclaw.aileapp.net",
+        "http://192.168.100.135:18789"
+      ],
+      "dangerouslyAllowHostHeaderOriginFallback": true
+    },
+    "auth": {
+      "mode": "token",
+      "token": "__OPENCLAW_REDACTED__"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "remote": {
+      "url": "ws://127.0.0.1:18789",
+      "token": "__OPENCLAW_REDACTED__"
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send"
+      ]
+    }
+  },
+  "plugins": {
+    "enabled": true,
+    "allow": [
+      "feishu",
+      "telegram"
+    ],
+    "entries": {
+      "feishu": {
+        "enabled": true
+      },
+      "telegram": {
+        "enabled": true
+      }
+    }
+  }
+}
